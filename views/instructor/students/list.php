@@ -1,6 +1,5 @@
 <?php
 $page_title = "Danh sách học viên";
-require_once __DIR__ . '/../../url_helper.php';
 ?>
 
 <div class="container">
@@ -15,7 +14,6 @@ require_once __DIR__ . '/../../url_helper.php';
                     <th>Ngày đăng ký</th>
                     <th>Tiến độ</th>
                     <th>Trạng thái</th>
-                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,9 +29,6 @@ require_once __DIR__ . '/../../url_helper.php';
                             <?php echo $student['progress']; ?>%
                         </td>
                         <td><?php echo htmlspecialchars($student['status']); ?></td>
-                        <td>
-                            <a href="<?php echo url('instructor/students/edit/' . $student['id']); ?>" class="btn btn-sm">Chỉnh sửa</a>
-                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

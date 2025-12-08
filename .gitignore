@@ -1,38 +1,76 @@
-# Environment files
-.env
+# =====================================================
+# .gitignore cho PHP Project
+# =====================================================
+
+# Config files với thông tin nhạy cảm
+config/database.local.php
+config/.env
+*.env
 .env.local
-.env.*.local
-config/config.local.php
 
-# Debug and test files
-debug.php
-check.php
-test_*.php
-*.test.php
+# Logs
+*.log
+logs/
+error_log
+access_log
 
-# Utility files (should be removed after use)
-create_admin_password.php
+# XAMPP / Apache
+.htaccess.local
 
-# IDE and editor files
-.vscode/
+# IDE / Editor files
 .idea/
+.vscode/
 *.swp
 *.swo
 *~
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
-logs/
-error_log
-
 # Temporary files
 *.tmp
 *.temp
-*.cache
 *.bak
 *.backup
+
+# Uploaded files (giữ cấu trúc thư mục)
+uploads/*
+!uploads/.gitkeep
+
+# Cache
+cache/
+tmp/
+*.cache
+
+# Composer
+/vendor/
+composer.lock
+
+# Node modules (nếu có)
+node_modules/
+package-lock.json
+
+# Build files
+/dist/
+/build/
+
+# Database dumps (không commit database)
+*.sql
+!database.sql  # Giữ file schema mẫu
+!database_phpmysql.sql
+!insert_sample_courses.sql
+!create_admin*.sql  # Giữ file tạo admin
+
+# Files test/debug (có thể giữ hoặc bỏ tùy nhu cầu)
+test_password.php
+check.php
+create_admin_password.php
+test_route.php
+copy_to_xampp.sh
+
+# Documentation files tạm thời (tùy chọn)
+FILE_DA_COPY.txt
+TAT_CA_THONG_TIN_DANG_NHAP.txt
+SUA_LOI_PASSWORD.md
 
 # OS files
 .DS_Store
@@ -41,25 +79,6 @@ error_log
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.db
+Desktop.ini
 
-# Composer (if used)
-/vendor/
-composer.lock
 
-# Node modules (if used)
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# Database dumps (may contain sensitive data)
-*.sql.backup
-*.sql.gz
-*.sql.zip
-
-# Uploaded files (if any)
-uploads/*
-!uploads/.gitkeep
-
-# Configuration files with sensitive data
-config/Database.local.php

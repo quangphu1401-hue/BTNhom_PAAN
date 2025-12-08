@@ -75,10 +75,10 @@ class CourseController {
         
         if ($enrollmentModel->enroll($course_id, $student_id)) {
             $_SESSION['success'] = 'Đăng ký khóa học thành công!';
-            redirect_to('course/detail/' . $course_id);
+            redirect('/onlinecourse/course/detail/' . $course_id);
         } else {
             $_SESSION['error'] = 'Đăng ký thất bại. Có thể bạn đã đăng ký khóa học này rồi.';
-            redirect_to('course/detail/' . $course_id);
+            redirect('/onlinecourse/course/detail/' . $course_id);
         }
     }
 }

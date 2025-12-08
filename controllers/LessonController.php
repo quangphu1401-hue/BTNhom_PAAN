@@ -32,12 +32,12 @@ class LessonController {
         if ($userRole != 1 && $userRole != 2) {
             if (!$enrollmentModel->isEnrolled($lesson['course_id'], $user_id)) {
                 $_SESSION['error'] = 'Bạn cần đăng ký khóa học để xem bài học này';
-                redirect_to('course/detail/' . $lesson['course_id']);
+                redirect('/onlinecourse/course/detail/' . $lesson['course_id']);
                 return;
             }
         } elseif ($userRole == 1 && $lesson['instructor_id'] != $user_id) {
             $_SESSION['error'] = 'Bạn không có quyền xem bài học này';
-            redirect_to('home');
+            redirect('/onlinecourse/home');
             return;
         }
         
