@@ -1,0 +1,74 @@
+═══════════════════════════════════════════════════════════════
+   SỬA LỖI 404 - HƯỚNG DẪN NHANH
+═══════════════════════════════════════════════════════════════
+
+VẤN ĐỀ:
+Truy cập localhost/onlinecourse/index.php?url=auth/login vẫn lỗi 404
+
+NGUYÊN NHÂN CÓ THỂ:
+1. Dự án không nằm trong DocumentRoot của Apache
+2. Lỗi PHP khiến file không chạy được
+3. Apache không đọc được file
+
+═══════════════════════════════════════════════════════════════
+   BƯỚC 1: KIỂM TRA ĐƯỜNG DẪN
+═══════════════════════════════════════════════════════════════
+
+1. Truy cập: http://localhost/onlinecourse/test_simple.php
+   → Nếu THẤY "TEST OK!" → PHP hoạt động
+   → Nếu LỖI 404 → Dự án không ở đúng thư mục!
+
+2. Kiểm tra thư mục Apache DocumentRoot:
+   - MAMP: /Applications/MAMP/htdocs/
+   - XAMPP: C:\xampp\htdocs\ (Windows) hoặc /Applications/XAMPP/htdocs/ (Mac)
+   
+3. Dự án phải nằm trong:
+   /Applications/MAMP/htdocs/onlinecourse/
+   HOẶC
+   /Applications/XAMPP/htdocs/onlinecourse/
+
+═══════════════════════════════════════════════════════════════
+   BƯỚC 2: DI CHUYỂN DỰ ÁN (Nếu cần)
+═══════════════════════════════════════════════════════════════
+
+Nếu dự án ở /Users/tophu/onlinecourse/ nhưng Apache serve từ /Applications/MAMP/htdocs/
+
+1. Copy hoặc move dự án:
+   cp -r /Users/tophu/onlinecourse /Applications/MAMP/htdocs/
+
+2. Hoặc tạo symlink:
+   ln -s /Users/tophu/onlinecourse /Applications/MAMP/htdocs/onlinecourse
+
+3. Hoặc đổi DocumentRoot trong Apache config trỏ về /Users/tophu/
+
+═══════════════════════════════════════════════════════════════
+   BƯỚC 3: KIỂM TRA LỖI PHP
+═══════════════════════════════════════════════════════════════
+
+1. Mở file index.php
+2. Thêm ở dòng đầu:
+   error_reporting(E_ALL);
+   ini_set('display_errors', 1);
+
+3. Truy cập lại và xem lỗi cụ thể
+
+═══════════════════════════════════════════════════════════════
+   BƯỚC 4: TEST TỪNG BƯỚC
+═══════════════════════════════════════════════════════════════
+
+1. http://localhost/onlinecourse/test_simple.php
+   → Phải thấy "TEST OK!"
+
+2. http://localhost/onlinecourse/test_index.php
+   → Xem thông tin đường dẫn
+
+3. http://localhost/onlinecourse/index.php
+   → Phải vào được trang chủ
+
+4. http://localhost/onlinecourse/index.php?url=auth/login
+   → Phải vào được trang đăng nhập
+
+═══════════════════════════════════════════════════════════════
+
+THỬ CÁC BƯỚC TRÊN VÀ CHO TÔI BIẾT KẾT QUẢ!
+

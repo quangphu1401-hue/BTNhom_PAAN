@@ -1,0 +1,27 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Không cần RewriteBase, để Apache tự detect
+    
+    # Cho phép truy cập trực tiếp các file trong assets
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^assets/ - [L]
+    
+    # Cho phép truy cập trực tiếp các file PHP trong thư mục gốc
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule \.(php|css|js|png|jpg|jpeg|gif|ico|svg)$ - [L]
+    
+    # Redirect tất cả request khác về index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

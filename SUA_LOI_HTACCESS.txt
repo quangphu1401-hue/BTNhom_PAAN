@@ -1,0 +1,109 @@
+═══════════════════════════════════════════════════════════════
+   SỬA LỖI .HTACCESS - HƯỚNG DẪN CHI TIẾT
+═══════════════════════════════════════════════════════════════
+
+VẤN ĐỀ:
+Tất cả các trang đều lỗi 404 → .htaccess không hoạt động
+
+═══════════════════════════════════════════════════════════════
+   BƯỚC 1: KIỂM TRA MOD_REWRITE
+═══════════════════════════════════════════════════════════════
+
+1. Truy cập: http://localhost/onlinecourse/check.php
+2. Xem kết quả:
+   ✅ ENABLED → Chuyển sang bước 2
+   ❌ DISABLED → Cần bật mod_rewrite
+
+═══════════════════════════════════════════════════════════════
+   BƯỚC 2: BẬT MOD_REWRITE (Nếu chưa bật)
+═══════════════════════════════════════════════════════════════
+
+TRÊN MAMP (Mac):
+
+1. Mở Terminal, gõ lệnh:
+   sudo nano /Applications/MAMP/conf/apache/httpd.conf
+
+2. Tìm dòng:
+   #LoadModule rewrite_module modules/mod_rewrite.so
+
+3. Bỏ dấu # ở đầu:
+   LoadModule rewrite_module modules/mod_rewrite.so
+
+4. Tìm và sửa:
+   <Directory "/Applications/MAMP/htdocs">
+       Options Indexes FollowSymLinks
+       AllowOverride None  ← Đổi thành AllowOverride All
+       Require all granted
+   </Directory>
+
+5. Restart MAMP
+
+TRÊN XAMPP:
+
+1. Mở file: xampp/apache/conf/httpd.conf
+2. Tìm: #LoadModule rewrite_module modules/mod_rewrite.so
+3. Bỏ dấu #: LoadModule rewrite_module modules/mod_rewrite.so
+4. Tìm và sửa AllowOverride None thành AllowOverride All
+5. Restart Apache
+
+═══════════════════════════════════════════════════════════════
+   BƯỚC 3: TEST TRỰC TIẾP VỚI INDEX.PHP
+═══════════════════════════════════════════════════════════════
+
+Nếu mod_rewrite chưa bật, bạn có thể test trực tiếp:
+
+✅ http://localhost/onlinecourse/index.php?url=home
+✅ http://localhost/onlinecourse/index.php?url=auth/login
+✅ http://localhost/onlinecourse/index.php?url=course
+
+Nếu các URL này hoạt động → Vấn đề nằm ở .htaccess
+
+═══════════════════════════════════════════════════════════════
+   BƯỚC 4: SỬA LẠI .HTACCESS
+═══════════════════════════════════════════════════════════════
+
+File .htaccess đã được cập nhật. Nếu vẫn lỗi, thử cách này:
+
+1. Xóa file .htaccess hiện tại
+2. Tạo file .htaccess mới với nội dung:
+
+   RewriteEngine On
+   RewriteBase /onlinecourse/
+   
+   RewriteCond %{REQUEST_FILENAME} !-f
+   RewriteCond %{REQUEST_FILENAME} !-d
+   RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
+
+3. Lưu và refresh trình duyệt
+
+═══════════════════════════════════════════════════════════════
+   BƯỚC 5: KIỂM TRA LẠI
+═══════════════════════════════════════════════════════════════
+
+Sau khi sửa, test lại:
+
+1. http://localhost/onlinecourse/check.php
+   → Kiểm tra mod_rewrite đã bật chưa
+
+2. http://localhost/onlinecourse/home
+   → Nếu không được, thử: index.php?url=home
+
+3. http://localhost/onlinecourse/auth/login
+   → Nếu không được, thử: index.php?url=auth/login
+
+═══════════════════════════════════════════════════════════════
+   GIẢI PHÁP TẠM THỜI
+═══════════════════════════════════════════════════════════════
+
+Nếu .htaccess vẫn không hoạt động:
+
+1. Dùng URL với index.php:
+   index.php?url=auth/login
+   index.php?url=course
+
+2. Hoặc cấu hình Virtual Host trong Apache
+
+═══════════════════════════════════════════════════════════════
+
+THỬ CÁC BƯỚC TRÊN VÀ CHO TÔI BIẾT KẾT QUẢ!
+

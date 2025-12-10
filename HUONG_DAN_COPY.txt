@@ -1,0 +1,70 @@
+═══════════════════════════════════════════════════════════════
+   COPY DỰ ÁN VÀO XAMPP - HƯỚNG DẪN NHANH
+═══════════════════════════════════════════════════════════════
+
+BẠN ĐANG Ở: /Users/tophu/onlinecourse/
+CẦN COPY VÀO: /Applications/XAMPP/htdocs/onlinecourse/
+
+═══════════════════════════════════════════════════════════════
+   CÁCH 1: DÙNG SCRIPT TỰ ĐỘNG (Dễ nhất)
+═══════════════════════════════════════════════════════════════
+
+1. Mở Terminal
+2. Chạy lệnh:
+   cd /Users/tophu/onlinecourse
+   ./copy_to_xampp.sh
+
+3. Trả lời y/n nếu được hỏi
+
+═══════════════════════════════════════════════════════════════
+   CÁCH 2: COPY THỦ CÔNG
+═══════════════════════════════════════════════════════════════
+
+1. Mở Terminal
+2. Chạy lệnh:
+   cp -r /Users/tophu/onlinecourse /Applications/XAMPP/htdocs/
+
+3. Kiểm tra:
+   ls -la /Applications/XAMPP/htdocs/onlinecourse/
+
+═══════════════════════════════════════════════════════════════
+   CÁCH 3: DÙNG FINDER (Thủ công)
+═══════════════════════════════════════════════════════════════
+
+1. Mở Finder
+2. Vào thư mục: /Users/tophu/onlinecourse
+3. Copy toàn bộ thư mục
+4. Vào: /Applications/XAMPP/htdocs/
+5. Paste vào đó
+
+═══════════════════════════════════════════════════════════════
+   SAU KHI COPY XONG
+═══════════════════════════════════════════════════════════════
+
+1. Đảm bảo XAMPP đang chạy (Apache và MySQL)
+
+2. Truy cập trong trình duyệt:
+   ✅ http://localhost/onlinecourse/
+   ✅ http://localhost/onlinecourse/index.php?url=home
+   ✅ http://localhost/onlinecourse/index.php?url=auth/login
+
+3. Nếu vẫn lỗi, kiểm tra:
+   - XAMPP Apache đang chạy?
+   - Port Apache là bao nhiêu? (80 hoặc 8080)
+   - File có đầy đủ trong htdocs/onlinecourse/?
+
+═══════════════════════════════════════════════════════════════
+   KIỂM TRA NHANH
+═══════════════════════════════════════════════════════════════
+
+Chạy lệnh này trong Terminal:
+
+ls -la /Applications/XAMPP/htdocs/onlinecourse/index.php
+
+Nếu thấy file → Copy thành công ✅
+Nếu không thấy → Copy lại ❌
+
+═══════════════════════════════════════════════════════════════
+
+THỬ CÁCH 1 TRƯỚC - NHANH NHẤT!
+

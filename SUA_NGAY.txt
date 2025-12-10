@@ -1,0 +1,75 @@
+═══════════════════════════════════════════════════════════════
+   SỬA LỖI 404 - HƯỚNG DẪN NHANH
+═══════════════════════════════════════════════════════════════
+
+VẤN ĐỀ: 
+Chỉ vào được trang chủ nhưng các trang khác lỗi 404
+
+NGUYÊN NHÂN:
+RewriteBase trong .htaccess sai hoặc router logic có vấn đề
+
+═══════════════════════════════════════════════════════════════
+   CÁCH SỬA (CHỌN 1 TRONG 3)
+═══════════════════════════════════════════════════════════════
+
+CÁCH 1: SỬA REWRITEBASE (Đơn giản nhất)
+
+1. Mở file .htaccess
+2. Tìm dòng: RewriteBase /CNW/onlinecourse/
+3. Sửa thành: RewriteBase /onlinecourse/
+   (Bỏ CNW đi vì bạn vào localhost/onlinecourse/)
+4. Lưu file
+5. Refresh trình duyệt
+
+Hoặc xóa hẳn dòng RewriteBase đi (file .htaccess mới đã không cần)
+
+═══════════════════════════════════════════════════════════════
+
+CÁCH 2: KIỂM TRA ROUTER
+
+File index.php đã được cập nhật với logic đơn giản hơn.
+Nếu vẫn lỗi, kiểm tra:
+
+1. File controllers/AuthController.php có tồn tại?
+2. Method login() có trong AuthController không?
+
+═══════════════════════════════════════════════════════════════
+
+CÁCH 3: TEST ROUTING
+
+1. Truy cập: http://localhost/onlinecourse/test_route.php?url=auth/login
+2. Xem kết quả để biết:
+   - Controller nào được gọi
+   - File có tồn tại không
+   - Method có tồn tại không
+
+═══════════════════════════════════════════════════════════════
+   SAU KHI SỬA - TEST CÁC URL NÀY
+═══════════════════════════════════════════════════════════════
+
+✅ http://localhost/onlinecourse/
+✅ http://localhost/onlinecourse/home
+✅ http://localhost/onlinecourse/auth/login
+✅ http://localhost/onlinecourse/auth/register
+✅ http://localhost/onlinecourse/course
+
+═══════════════════════════════════════════════════════════════
+   LƯU Ý QUAN TRỌNG
+═══════════════════════════════════════════════════════════════
+
+1. URL KHÔNG có .php ở cuối
+   ✅ auth/login
+   ❌ auth/login.php
+
+2. URL viết thường
+   ✅ auth/login
+   ❌ Auth/Login
+
+3. Không có dấu / ở cuối (trừ trang chủ)
+   ✅ auth/login
+   ❌ auth/login/
+
+═══════════════════════════════════════════════════════════════
+
+THỬ CÁCH 1 TRƯỚC - ĐƠN GIẢN NHẤT!
+
