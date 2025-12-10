@@ -1,0 +1,69 @@
+═══════════════════════════════════════════════════════════════
+   GIẢI PHÁP NHANH - SỬA LỖI 404
+═══════════════════════════════════════════════════════════════
+
+VẤN ĐỀ:
+- Truy cập localhost/onlinecourse/auth/register → LỖI 404
+- Truy cập localhost/onlinecourse/course → LỖI 404
+
+NGUYÊN NHÂN:
+- .htaccess không hoạt động hoặc mod_rewrite chưa bật
+- URL đẹp không hoạt động
+
+═══════════════════════════════════════════════════════════════
+   GIẢI PHÁP: DÙNG URL VỚI INDEX.PHP
+═══════════════════════════════════════════════════════════════
+
+Thay vì:
+❌ localhost/onlinecourse/auth/register
+
+Dùng:
+✅ localhost/onlinecourse/index.php?url=auth/register
+
+═══════════════════════════════════════════════════════════════
+   CÁC URL ĐÚNG ĐỂ TRUY CẬP
+═══════════════════════════════════════════════════════════════
+
+1. Trang chủ:
+   http://localhost/onlinecourse/index.php?url=home
+
+2. Đăng nhập:
+   http://localhost/onlinecourse/index.php?url=auth/login
+
+3. Đăng ký:
+   http://localhost/onlinecourse/index.php?url=auth/register
+
+4. Danh sách khóa học:
+   http://localhost/onlinecourse/index.php?url=course
+
+5. Chi tiết khóa học:
+   http://localhost/onlinecourse/index.php?url=course/detail/1
+
+6. Dashboard học viên:
+   http://localhost/onlinecourse/index.php?url=student/dashboard
+
+═══════════════════════════════════════════════════════════════
+   ĐÃ CẬP NHẬT CODE
+═══════════════════════════════════════════════════════════════
+
+Tôi đã cập nhật code để:
+- Tất cả link trong header tự động dùng index.php?url=
+- Form action tự động dùng index.php?url=
+- Các link trong views đã được sửa
+
+Sau khi copy file mới vào XAMPP, các link sẽ tự động hoạt động!
+
+═══════════════════════════════════════════════════════════════
+   COPY FILE VÀO XAMPP
+═══════════════════════════════════════════════════════════════
+
+Mở Terminal và chạy:
+
+cp -r /Users/tophu/onlinecourse /Applications/XAMPP/htdocs/
+
+Hoặc dùng Finder để copy thủ công.
+
+═══════════════════════════════════════════════════════════════
+
+SAU KHI COPY, THỬ CÁC URL TRÊN!
+
