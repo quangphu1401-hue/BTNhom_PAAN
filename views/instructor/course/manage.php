@@ -64,6 +64,7 @@ $page_title = "Quản lý khóa học";
                         <th>Ngày đăng ký</th>
                         <th>Tiến độ</th>
                         <th>Trạng thái</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,6 +75,9 @@ $page_title = "Quản lý khóa học";
                             <td><?php echo formatDate($student['enrolled_date']); ?></td>
                             <td><?php echo $student['progress']; ?>%</td>
                             <td><?php echo htmlspecialchars($student['status']); ?></td>
+                            <td>
+                                <a href="/onlinecourse/instructor/students/edit/<?php echo $student['id']; ?>" class="btn btn-sm">Chỉnh sửa</a>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
