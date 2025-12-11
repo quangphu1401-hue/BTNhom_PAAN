@@ -71,7 +71,7 @@ function sanitize($data) {
     return htmlspecialchars(strip_tags(trim($data)));
 }
 
-// Redirect
+// Redirect (deprecated - use redirect_to() from url_helper.php instead)
 function redirect($url) {
     header('Location: ' . $url);
     exit;

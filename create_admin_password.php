@@ -2,12 +2,23 @@
 /**
  * Script tạo password hash cho tài khoản admin
  * 
+ * ⚠️ WARNING: XÓA FILE NÀY SAU KHI SỬ DỤNG!
+ * 
  * Cách sử dụng:
- * 1. Mở file này trong trình duyệt: http://localhost/onlinecourse/create_admin_password.php
+ * 1. Mở file này trong trình duyệt
  * 2. Nhập password bạn muốn
  * 3. Copy hash được tạo ra
  * 4. Dùng hash đó để tạo tài khoản admin trong phpMyAdmin
+ * 5. XÓA FILE NÀY NGAY LẬP TỨC!
  */
+
+// Simple security check - only allow from localhost in development
+$allowed = in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1', 'localhost']) 
+           || (defined('APP_ENV') && APP_ENV === 'development');
+
+if (!$allowed) {
+    die('Access denied. This file should only be accessed from localhost during setup.');
+}
 
 // Kiểm tra xem có yêu cầu tạo hash không
 if (isset($_POST['password']) && !empty($_POST['password'])) {

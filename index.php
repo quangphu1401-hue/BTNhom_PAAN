@@ -1,7 +1,19 @@
 <?php
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Environment configuration
+// Set to 'production' when deploying, 'development' for local development
+define('APP_ENV', getenv('APP_ENV') ?: 'development');
+define('APP_DEBUG', getenv('APP_DEBUG') ?: (APP_ENV === 'development'));
+
+// Error reporting - only show errors in development
+if (APP_DEBUG) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    ini_set('error_log', __DIR__ . '/logs/error.log');
+}
 
 session_start();
 

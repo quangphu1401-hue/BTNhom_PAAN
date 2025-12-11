@@ -6,7 +6,8 @@ class AuthController {
     
     public function login() {
         if (isLoggedIn()) {
-            redirect('/onlinecourse/home');
+            $base_path = getBasePath();
+            redirect($base_path . '/index.php?url=home');
             return;
         }
         
@@ -29,13 +30,14 @@ class AuthController {
                     $_SESSION['role'] = $user['role'];
                     $_SESSION['email'] = $user['email'];
                     
+                    $base_path = getBasePath();
                     // Redirect based on role
                     if ($user['role'] == 1) {
-                        redirect('/onlinecourse/instructor/dashboard');
+                        redirect($base_path . '/index.php?url=instructor/dashboard');
                     } elseif ($user['role'] == 2) {
-                        redirect('/onlinecourse/admin/dashboard');
+                        redirect($base_path . '/index.php?url=admin/dashboard');
                     } else {
-                        redirect('/onlinecourse/student/dashboard');
+                        redirect($base_path . '/index.php?url=student/dashboard');
                     }
                     return;
                 } else {
@@ -51,7 +53,8 @@ class AuthController {
     
     public function register() {
         if (isLoggedIn()) {
-            redirect('/onlinecourse/home');
+            $base_path = getBasePath();
+            redirect($base_path . '/index.php?url=home');
             return;
         }
         
@@ -93,7 +96,8 @@ class AuthController {
                     if ($user_id) {
                         $success = 'Đăng ký thành công! Vui lòng đăng nhập.';
                         // Redirect to login after 2 seconds
-                        header('Refresh: 2; url=/onlinecourse/auth/login');
+                        $base_path = getBasePath();
+                        header('Refresh: 2; url=' . $base_path . '/index.php?url=auth/login');
                     } else {
                         $error = 'Đăng ký thất bại. Vui lòng thử lại.';
                     }
@@ -108,7 +112,8 @@ class AuthController {
     
     public function logout() {
         session_destroy();
-        redirect('/onlinecourse/home');
+        $base_path = getBasePath();
+        redirect($base_path . '/index.php?url=home');
     }
 }
 ?>

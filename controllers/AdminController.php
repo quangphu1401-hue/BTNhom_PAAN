@@ -67,7 +67,7 @@ class AdminController {
                 $_SESSION['success'] = 'Xóa danh mục thành công';
             }
             
-            redirect('/onlinecourse/admin/categories');
+            redirect_to('admin/categories');
             return;
         }
         

@@ -77,7 +77,7 @@ class InstructorController {
             
             if ($course_id) {
                 $_SESSION['success'] = 'Tạo khóa học thành công!';
-                redirect('/onlinecourse/instructor/course/manage/' . $course_id);
+                redirect_to('instructor/course/manage/' . $course_id);
             } else {
                 $_SESSION['error'] = 'Tạo khóa học thất bại. Vui lòng thử lại.';
             }
@@ -137,7 +137,7 @@ class InstructorController {
             
             if ($courseModel->update($course_id, $data)) {
                 $_SESSION['success'] = 'Cập nhật khóa học thành công!';
-                redirect('/onlinecourse/instructor/course/manage/' . $course_id);
+                redirect_to('instructor/course/manage/' . $course_id);
             } else {
                 $_SESSION['error'] = 'Cập nhật khóa học thất bại.';
             }
@@ -193,12 +193,48 @@ class InstructorController {
             $_SESSION['error'] = 'Xóa khóa học thất bại.';
         }
         
-        redirect('/onlinecourse/instructor/myCourses');
+        redirect_to('instructor/myCourses');
     }
     
-    // Quản lý bài học
-    public function lessons($course_id) {
+    // Quản lý bài học - xử lý cả nested routes: instructor/lessons/{course_id} và instructor/lessons/{action}/{id}
+    public function lessons($course_id_or_action = null, $id = null) {
         requireRole('instructor');
+        
+        // Nếu có 2 tham số, đó là action và id (route: instructor/lessons/{action}/{id})
+        if ($id !== null) {
+            $action = $course_id_or_action;
+            switch ($action) {
+                case 'edit':
+                    if ($id) {
+                        $this->editLesson($id);
+                    } else {
+                        http_response_code(404);
+                        require_once __DIR__ . '/../views/errors/404.php';
+                    }
+                    return;
+                case 'delete':
+                    if ($id) {
+                        $this->deleteLesson($id);
+                    } else {
+                        http_response_code(404);
+                        require_once __DIR__ . '/../views/errors/404.php';
+                    }
+                    return;
+                default:
+                    http_response_code(404);
+                    require_once __DIR__ . '/../views/errors/404.php';
+                    return;
+            }
+        }
+        
+        // Nếu chỉ có 1 tham số, đó là course_id (route: instructor/lessons/{course_id})
+        $course_id = $course_id_or_action;
+        
+        if (!$course_id || !is_numeric($course_id)) {
+            http_response_code(404);
+            require_once __DIR__ . '/../views/errors/404.php';
+            return;
+        }
         
         $courseModel = new Course();
         $lessonModel = new Lesson();
@@ -289,7 +325,7 @@ class InstructorController {
             
             if ($lessonModel->update($lesson_id, $data)) {
                 $_SESSION['success'] = 'Cập nhật bài học thành công!';
-                redirect('/onlinecourse/instructor/lessons/' . $lesson['course_id']);
+                redirect_to('instructor/lessons/' . $lesson['course_id']);
             } else {
                 $_SESSION['error'] = 'Cập nhật bài học thất bại.';
             }
@@ -326,7 +362,7 @@ class InstructorController {
             $_SESSION['error'] = 'Xóa bài học thất bại.';
         }
         
-        redirect('/onlinecourse/instructor/lessons/' . $lesson['course_id']);
+        redirect_to('instructor/lessons/' . $lesson['course_id']);
     }
     
     // Đăng tải tài liệu
@@ -380,7 +416,7 @@ class InstructorController {
                 }
             }
             
-            redirect('/onlinecourse/instructor/lessons/' . $lesson['course_id']);
+            redirect_to('instructor/lessons/' . $lesson['course_id']);
             return;
         }
         
@@ -391,9 +427,37 @@ class InstructorController {
         require_once __DIR__ . '/../views/layouts/footer.php';
     }
     
-    // Xem danh sách học viên
-    public function students($course_id) {
+    // Xem danh sách học viên - xử lý cả nested routes: instructor/students/{course_id} và instructor/students/{action}/{id}
+    public function students($course_id_or_action = null, $id = null) {
         requireRole('instructor');
+        
+        // Nếu có 2 tham số, đó là action và id (route: instructor/students/{action}/{id})
+        if ($id !== null) {
+            $action = $course_id_or_action;
+            switch ($action) {
+                case 'edit':
+                    if ($id) {
+                        $this->editStudent($id);
+                    } else {
+                        http_response_code(404);
+                        require_once __DIR__ . '/../views/errors/404.php';
+                    }
+                    return;
+                default:
+                    http_response_code(404);
+                    require_once __DIR__ . '/../views/errors/404.php';
+                    return;
+            }
+        }
+        
+        // Nếu chỉ có 1 tham số, đó là course_id (route: instructor/students/{course_id})
+        $course_id = $course_id_or_action;
+        
+        if (!$course_id || !is_numeric($course_id)) {
+            http_response_code(404);
+            require_once __DIR__ . '/../views/errors/404.php';
+            return;
+        }
         
         $courseModel = new Course();
         $enrollmentModel = new Enrollment();
@@ -410,6 +474,51 @@ class InstructorController {
         
         require_once __DIR__ . '/../views/layouts/header.php';
         require_once __DIR__ . '/../views/instructor/students/list.php';
+        require_once __DIR__ . '/../views/layouts/footer.php';
+    }
+    
+    // Chỉnh sửa thông tin học viên
+    public function editStudent($enrollment_id) {
+        requireRole('instructor');
+        
+        $enrollmentModel = new Enrollment();
+        $enrollment = $enrollmentModel->getById($enrollment_id);
+        
+        if (!$enrollment) {
+            http_response_code(404);
+            require_once __DIR__ . '/../views/errors/404.php';
+            return;
+        }
+        
+        // Kiểm tra quyền - chỉ instructor của khóa học mới được chỉnh sửa
+        if ($enrollment['instructor_id'] != getUserId()) {
+            http_response_code(403);
+            echo 'Bạn không có quyền chỉnh sửa học viên này';
+            return;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'progress' => isset($_POST['progress']) ? (int)$_POST['progress'] : 0,
+                'status' => sanitize($_POST['status'] ?? 'active')
+            ];
+            
+            // Validate
+            if ($data['progress'] < 0 || $data['progress'] > 100) {
+                $_SESSION['error'] = 'Tiến độ phải từ 0 đến 100';
+            } else {
+                if ($enrollmentModel->update($enrollment_id, $data)) {
+                    $_SESSION['success'] = 'Cập nhật thông tin học viên thành công!';
+                    redirect_to('instructor/students/' . $enrollment['course_id']);
+                    return;
+                } else {
+                    $_SESSION['error'] = 'Cập nhật thất bại. Vui lòng thử lại.';
+                }
+            }
+        }
+        
+        require_once __DIR__ . '/../views/layouts/header.php';
+        require_once __DIR__ . '/../views/instructor/students/edit.php';
         require_once __DIR__ . '/../views/layouts/footer.php';
     }
 }
