@@ -6,7 +6,7 @@
         </div>
     </footer>
 
-    <script src="/onlinecourse/assets/js/script.js"></script>
+    <script src="<?php echo asset_url('js/script.js'); ?>"></script>
 </body>
 </html>
 
