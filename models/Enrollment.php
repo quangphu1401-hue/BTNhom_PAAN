@@ -100,6 +100,42 @@ class Enrollment {
         
         return $stmt->fetch();
     }
+
+    // Lấy enrollment theo ID
+    public function getById($enrollment_id) {
+        $query = "SELECT e.*, u.fullname, u.email, u.username, c.title as course_title, c.instructor_id
+                  FROM " . $this->table . " e
+                  JOIN users u ON e.student_id = u.id
+                  JOIN courses c ON e.course_id = c.id
+                  WHERE e.id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $enrollment_id);
+        $stmt->execute();
+        
+        return $stmt->fetch();
+    }
+
+    // Cập nhật enrollment (tiến độ và trạng thái)
+    public function update($enrollment_id, $data) {
+        $fields = [];
+        foreach ($data as $key => $value) {
+            if ($key !== 'id') {
+                $fields[] = "$key = :$key";
+            }
+        }
+        
+        $query = "UPDATE " . $this->table . " SET " . implode(', ', $fields) . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        
+        foreach ($data as $key => $value) {
+            if ($key !== 'id') {
+                $stmt->bindValue(":$key", $value);
+            }
+        }
+        $stmt->bindParam(':id', $enrollment_id);
+        
+        return $stmt->execute();
+    }
 }
 ?>
 
