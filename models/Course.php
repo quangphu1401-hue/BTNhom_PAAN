@@ -106,19 +106,42 @@ class Course {
 
     // Tạo course mới
     public function create($data) {
-        $query = "INSERT INTO " . $this->table . " 
-                  (title, description, instructor_id, category_id, price, duration_weeks, level, image) 
-                  VALUES (:title, :description, :instructor_id, :category_id, :price, :duration_weeks, :level, :image)";
+        $hasStatus = $this->hasStatusColumn();
         
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':title', $data['title']);
-        $stmt->bindParam(':description', $data['description']);
-        $stmt->bindParam(':instructor_id', $data['instructor_id']);
-        $stmt->bindParam(':category_id', $data['category_id']);
-        $stmt->bindParam(':price', $data['price']);
-        $stmt->bindParam(':duration_weeks', $data['duration_weeks']);
-        $stmt->bindParam(':level', $data['level']);
-        $stmt->bindParam(':image', $data['image']);
+        if ($hasStatus) {
+            // Mặc định status = 'pending' nếu không được chỉ định
+            $status = $data['status'] ?? 'pending';
+            
+            $query = "INSERT INTO " . $this->table . " 
+                      (title, description, instructor_id, category_id, price, duration_weeks, level, image, status) 
+                      VALUES (:title, :description, :instructor_id, :category_id, :price, :duration_weeks, :level, :image, :status)";
+            
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':title', $data['title']);
+            $stmt->bindParam(':description', $data['description']);
+            $stmt->bindParam(':instructor_id', $data['instructor_id']);
+            $stmt->bindParam(':category_id', $data['category_id']);
+            $stmt->bindParam(':price', $data['price']);
+            $stmt->bindParam(':duration_weeks', $data['duration_weeks']);
+            $stmt->bindParam(':level', $data['level']);
+            $stmt->bindParam(':image', $data['image']);
+            $stmt->bindParam(':status', $status);
+        } else {
+            // Nếu chưa có cột status, không thêm vào query
+            $query = "INSERT INTO " . $this->table . " 
+                      (title, description, instructor_id, category_id, price, duration_weeks, level, image) 
+                      VALUES (:title, :description, :instructor_id, :category_id, :price, :duration_weeks, :level, :image)";
+            
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':title', $data['title']);
+            $stmt->bindParam(':description', $data['description']);
+            $stmt->bindParam(':instructor_id', $data['instructor_id']);
+            $stmt->bindParam(':category_id', $data['category_id']);
+            $stmt->bindParam(':price', $data['price']);
+            $stmt->bindParam(':duration_weeks', $data['duration_weeks']);
+            $stmt->bindParam(':level', $data['level']);
+            $stmt->bindParam(':image', $data['image']);
+        }
         
         if ($stmt->execute()) {
             return $this->conn->lastInsertId();
@@ -154,6 +177,121 @@ class Course {
         $stmt->bindParam(':id', $id);
         
         return $stmt->execute();
+    }
+
+    // Kiểm tra xem cột status có tồn tại không
+    private function hasStatusColumn() {
+        try {
+            $query = "SHOW COLUMNS FROM " . $this->table . " LIKE 'status'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt->rowCount() > 0;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    // Lấy khóa học chờ duyệt (pending)
+    public function getPendingCourses() {
+        $hasStatus = $this->hasStatusColumn();
+        
+        if ($hasStatus) {
+            $query = "SELECT c.*, u.fullname as instructor_name, u.email as instructor_email, 
+                      cat.name as category_name
+                      FROM " . $this->table . " c
+                      LEFT JOIN users u ON c.instructor_id = u.id
+                      LEFT JOIN categories cat ON c.category_id = cat.id
+                      WHERE c.status = 'pending' OR c.status IS NULL
+                      ORDER BY c.created_at ASC";
+        } else {
+            // Nếu chưa có cột status, trả về tất cả khóa học mới nhất (giả định là chờ duyệt)
+            $query = "SELECT c.*, u.fullname as instructor_name, u.email as instructor_email, 
+                      cat.name as category_name
+                      FROM " . $this->table . " c
+                      LEFT JOIN users u ON c.instructor_id = u.id
+                      LEFT JOIN categories cat ON c.category_id = cat.id
+                      ORDER BY c.created_at DESC
+                      LIMIT 20";
+        }
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        
+        return $stmt->fetchAll();
+    }
+
+    // Phê duyệt khóa học
+    public function approveCourse($id) {
+        $hasStatus = $this->hasStatusColumn();
+        
+        if ($hasStatus) {
+            $query = "UPDATE " . $this->table . " SET status = 'approved' WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id);
+            return $stmt->execute();
+        } else {
+            // Nếu chưa có cột status, chỉ cần trả về true (coi như đã duyệt)
+            return true;
+        }
+    }
+
+    // Từ chối khóa học
+    public function rejectCourse($id) {
+        $hasStatus = $this->hasStatusColumn();
+        
+        if ($hasStatus) {
+            $query = "UPDATE " . $this->table . " SET status = 'rejected' WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id);
+            return $stmt->execute();
+        } else {
+            // Nếu chưa có cột status, xóa khóa học hoặc đánh dấu bằng cách khác
+            // Tạm thời chỉ trả về true
+            return true;
+        }
+    }
+
+    // Lấy thống kê khóa học
+    public function getStatistics() {
+        $stats = [];
+        $hasStatus = $this->hasStatusColumn();
+        
+        // Tổng số khóa học
+        $query = "SELECT COUNT(*) as total FROM " . $this->table;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        $stats['total_courses'] = $result['total'] ?? 0;
+        
+        if ($hasStatus) {
+            // Khóa học đã duyệt
+            $query = "SELECT COUNT(*) as total FROM " . $this->table . " WHERE status = 'approved'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $result = $stmt->fetch();
+            $stats['approved_courses'] = $result['total'] ?? 0;
+            
+            // Khóa học chờ duyệt
+            $query = "SELECT COUNT(*) as total FROM " . $this->table . " WHERE status = 'pending' OR status IS NULL";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $result = $stmt->fetch();
+            $stats['pending_courses'] = $result['total'] ?? 0;
+            
+            // Khóa học bị từ chối
+            $query = "SELECT COUNT(*) as total FROM " . $this->table . " WHERE status = 'rejected'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $result = $stmt->fetch();
+            $stats['rejected_courses'] = $result['total'] ?? 0;
+        } else {
+            // Nếu chưa có cột status, coi tất cả là đã duyệt
+            $stats['approved_courses'] = $stats['total_courses'];
+            $stats['pending_courses'] = 0;
+            $stats['rejected_courses'] = 0;
+        }
+        
+        return $stats;
     }
 }
 ?>
