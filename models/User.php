@@ -110,6 +110,42 @@ class User {
         
         return $stmt->execute();
     }
+
+    // Kiểm tra email đã tồn tại (trừ user hiện tại)
+    public function emailExistsExcept($email, $excludeId) {
+        $query = "SELECT id FROM " . $this->table . " WHERE email = :email AND id != :exclude_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':exclude_id', $excludeId);
+        $stmt->execute();
+        
+        return $stmt->rowCount() > 0;
+    }
+
+    // Kiểm tra username đã tồn tại (trừ user hiện tại)
+    public function usernameExistsExcept($username, $excludeId) {
+        $query = "SELECT id FROM " . $this->table . " WHERE username = :username AND id != :exclude_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':exclude_id', $excludeId);
+        $stmt->execute();
+        
+        return $stmt->rowCount() > 0;
+    }
+
+    // Xóa user
+    public function deleteUser($id) {
+        // Không cho phép xóa chính mình
+        if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $id) {
+            return false;
+        }
+        
+        $query = "DELETE FROM " . $this->table . " WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        
+        return $stmt->execute();
+    }
 }
 ?>
 

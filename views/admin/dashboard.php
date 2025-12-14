@@ -17,9 +17,10 @@ $page_title = "Dashboard Admin";
     </div>
     
     <div class="admin-menu">
-        <a href="/onlinecourse/admin/users" class="btn btn-primary">Quản lý người dùng</a>
-        <a href="/onlinecourse/admin/categories" class="btn btn-primary">Quản lý danh mục</a>
-        <a href="/onlinecourse/admin/statistics" class="btn btn-primary">Thống kê</a>
+        <a href="<?php echo function_exists('url') ? url('admin/users') : (getBasePath() . '/index.php?url=admin/users'); ?>" class="btn btn-primary">Quản lý người dùng</a>
+        <a href="<?php echo function_exists('url') ? url('admin/categories') : (getBasePath() . '/index.php?url=admin/categories'); ?>" class="btn btn-primary">Quản lý danh mục</a>
+        <a href="<?php echo function_exists('url') ? url('admin/statistics') : (getBasePath() . '/index.php?url=admin/statistics'); ?>" class="btn btn-primary">Thống kê hệ thống</a>
+        <a href="<?php echo function_exists('url') ? url('admin/approveCourses') : (getBasePath() . '/index.php?url=admin/approveCourses'); ?>" class="btn btn-warning">Duyệt khóa học</a>
     </div>
 </div>
 
