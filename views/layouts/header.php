@@ -24,7 +24,15 @@
                         <li><a href="<?php echo url('instructor/myCourses'); ?>">Khóa học của tôi</a></li>
                     <?php elseif (hasRole('admin')): ?>
                         <li><a href="<?php echo url('admin/dashboard'); ?>">Dashboard</a></li>
-                        <li><a href="<?php echo url('admin/users'); ?>">Quản lý</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle">Quản lý</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="<?php echo url('admin/users'); ?>">Quản lý người dùng</a></li>
+                                <li><a href="<?php echo url('admin/categories'); ?>">Quản lý danh mục</a></li>
+                                <li><a href="<?php echo url('admin/approveCourses'); ?>">Duyệt khóa học</a></li>
+                                <li><a href="<?php echo url('admin/statistics'); ?>">Thống kê</a></li>
+                            </ul>
+                        </li>
                     <?php endif; ?>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle">

@@ -22,6 +22,21 @@ class Material {
         return $stmt->fetchAll();
     }
 
+    // Lấy tất cả materials của một khóa học (từ tất cả các bài học)
+    public function getByCourse($course_id) {
+        $query = "SELECT m.*, l.title as lesson_title, l.`order` as lesson_order
+                  FROM " . $this->table . " m
+                  INNER JOIN lessons l ON m.lesson_id = l.id
+                  WHERE l.course_id = :course_id
+                  ORDER BY l.`order` ASC, m.uploaded_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':course_id', $course_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $results ? $results : [];
+    }
+
     // Lấy material theo ID
     public function getById($id) {
         $query = "SELECT * FROM " . $this->table . " WHERE id = :id";

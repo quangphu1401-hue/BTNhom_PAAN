@@ -1,25 +1,25 @@
 <?php
 $page_title = "Dashboard Admin";
+include 'db.php';
+
+$result  = mysqli_query($conn, $sql);
+$courses = mysqli_fetch_all($result, MYSQLI_ASSOC);
 ?>
 
-<div class="container">
-    <h1>Dashboard Quản trị viên</h1>
-    
-    <div class="dashboard-stats">
-        <div class="stat-card">
-            <h3>Tổng số người dùng</h3>
-            <p class="stat-number"><?php echo $totalUsers; ?></p>
-        </div>
-        <div class="stat-card">
-            <h3>Tổng số khóa học</h3>
-            <p class="stat-number"><?php echo $totalCourses; ?></p>
-        </div>
-    </div>
-    
-    <div class="admin-menu">
-        <a href="/onlinecourse/admin/users" class="btn btn-primary">Quản lý người dùng</a>
-        <a href="/onlinecourse/admin/categories" class="btn btn-primary">Quản lý danh mục</a>
-        <a href="/onlinecourse/admin/statistics" class="btn btn-primary">Thống kê</a>
-    </div>
-</div>
+<h1><?php echo $page_title; ?></h1>
+<p>Tổng số khóa học trong hệ thống: <?php echo count($courses); ?></p>
 
+<table border="1">
+    <tr>
+        <th>Tên khóa học</th>
+        <th>Danh mục</th>
+        <th>Cấp độ</th>
+    </tr>
+    <?php foreach ($courses as $course): ?>
+    <tr>
+        <td><?php echo $course['title']; ?></td>
+        <td><?php echo $course['category_name']; ?></td>
+        <td><?php echo $course['level']; ?></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
